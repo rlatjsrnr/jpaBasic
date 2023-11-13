@@ -82,7 +82,7 @@ public class JpaMain {
             System.out.println("==========================");
             mem = em.find(Member.class, 200L);
 
-             */
+
 
             Member member = new Member();
             member.setId(2L);
@@ -90,6 +90,11 @@ public class JpaMain {
             member.setRoleType(RoleType.ADMIN);
             em.persist(member);
 
+             */
+            Member member = new Member();
+            member.setUsername("C");
+
+            em.persist(member);
 
             tx.commit();
         } catch (Exception e) {
