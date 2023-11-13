@@ -1,8 +1,8 @@
 # JPA
-## 목차
-1. [jpaBasic](#jpaBasic)
-2. [영속성 컨택스트(persistence context)](#영속성-컨택스트(persistence-context))
-3. [flush()](flush())
+- [JPA](#jpa)  
+  * [jpaBasic](#jpabasic)
+  * [영속성 컨택스트(persistence context)](#---------persistence-context-)
+  * [flush()](#flush--)
 
 ## jpaBasic
 JAP의 목적 : 데이터를 자바 컬렉션 다루 듯 하는 것
