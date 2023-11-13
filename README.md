@@ -6,8 +6,9 @@
 
 ## jpaBasic
 
-JAP의 목적 : 데이터를 자바 컬렉션 다루 듯 하는 것
+JPA의 목적 : 데이터를 자바 컬렉션 다루 듯 하는 것
 
+JPA의 기본
 1. entityManagerFactory 에서 entityManager를 얻어온다.
 2. EntityTransaction tx = entityManager.getTransaction();
    - jpa의 모든 작업은 transaction 내에서 수행 되어야 한다.
