@@ -1,10 +1,11 @@
 # JPA
 - [JPA](#jpa)  
   * [jpaBasic](#jpabasic)
-  * [영속성 컨택스트(persistence context)](#---------persistence-context-)
-  * [flush()](#flush--)
+  * [영속성 컨택스트(persistence context)](#영속성-컨택스트(persistence-context))
+  * [flush()](#flush())
 
 ## jpaBasic
+
 JAP의 목적 : 데이터를 자바 컬렉션 다루 듯 하는 것
 
 1. entityManagerFactory 에서 entityManager를 얻어온다.
@@ -24,26 +25,27 @@ entityManager.createQuery("select m from Member as m").setFirstResult(3).setMaxR
  - 페이징처리 가능
 
 ## 영속성 컨택스트(persistence context)
- - Entity를 영구 저장하는 환경
- - EntityManager를 통해 영속성 컨택스트에 접근
- - EntityManager와 영속성 컨택스트는 1:1로 매칭된다.
- - Entity의 생명주기
-   - 비영속(new / transient) : 영속성 컨텍스트와 전혀 관계가 없는새로운 상태
-   - 영속(managed) : 영속성 컨택스트에 관리되는 상태
-   - 준영속(detached) : 영속성 컨텍스트에 저장되었다가 분리된 상태
-   - 삭제(remove) : 삭제된 상태
+
+- Entity를 영구 저장하는 환경
+- EntityManager를 통해 영속성 컨택스트에 접근
+- EntityManager와 영속성 컨택스트는 1:1로 매칭된다.
+- Entity의 생명주기
+  - 비영속(new / transient) : 영속성 컨텍스트와 전혀 관계가 없는새로운 상태
+  - 영속(managed) : 영속성 컨택스트에 관리되는 상태
+  - 준영속(detached) : 영속성 컨텍스트에 저장되었다가 분리된 상태
+  - 삭제(remove) : 삭제된 상태
    <img width="530" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/eb64d4f5-5af3-4b43-a7cb-063e29a59c42">
 
- - 영속성 컨텍스트의 이점
-   - 1차 캐시
-   - 동일성(identity) 보장
-   - 트랜잭션을 지원하는 쓰기 지연 (transactional write-behind)
-   - 변경 감지(Dirty Checking)
-   - 지연 로딩(Lazy Loading)
+- 영속성 컨텍스트의 이점
+  - 1차 캐시
+  - 동일성(identity) 보장
+  - 트랜잭션을 지원하는 쓰기 지연 (transactional write-behind)
+  - 변경 감지(Dirty Checking)
+  - 지연 로딩(Lazy Loading)
 
- + JPA는 em.persist(객체), 즉 insert를 한 경우 바로 insert 쿼리를 날리는게 아니라 entity를 1차 캐시에 저장하고 쓰기 지연 SQL 저장소에 insert 쿼리문을 저장해 둔다. 
- + 또한 조회를 하면 먼저 1차 캐시 안에서 찾고, 만약 없다면 DB에서 entitiy를 가져와 1차 캐시에 저장한 후 반환한다.
- + 같은 트랜젝션 내에서 같은 entity를 조회를 할 경우는 1차 캐시 내의 같은 entity를 조회 하기 때문에 동일성이 보장된다.
++ JPA는 em.persist(객체), 즉 insert를 한 경우 바로 insert 쿼리를 날리는게 아니라 entity를 1차 캐시에 저장하고 쓰기 지연 SQL 저장소에 insert 쿼리문을 저장해 둔다. 
++ 또한 조회를 하면 먼저 1차 캐시 안에서 찾고, 만약 없다면 DB에서 entitiy를 가져와 1차 캐시에 저장한 후 반환한다.
++ 같은 트랜젝션 내에서 같은 entity를 조회를 할 경우는 1차 캐시 내의 같은 entity를 조회 하기 때문에 동일성이 보장된다.
    <img width="320" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/70ef3878-ad4a-4395-a63a-c56998157e8c">
 
    ```
@@ -57,6 +59,7 @@ entityManager.createQuery("select m from Member as m").setFirstResult(3).setMaxR
 + em.remove(a) 삭제시에도 위와 같은 과정을 거친다.
 
 ## flush()
+
 + flush() : 영속성 컨텍스트의 변경내용을 데이터베이스에 반영
 + flush() 호출 방법
   - entityManager.flush() 를 통한 직접 호출
