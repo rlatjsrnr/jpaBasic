@@ -1,4 +1,10 @@
-# jpaBasic
+# JPA
+## 목차
+1. [jpaBasic](#jpaBasic)
+2. [영속성 컨택스트(persistence context)](#영속성-컨택스트(persistence-context))
+3. [flush()](flush())
+
+## jpaBasic
 JAP의 목적 : 데이터를 자바 컬렉션 다루 듯 하는 것
 
 1. entityManagerFactory 에서 entityManager를 얻어온다.
@@ -17,7 +23,7 @@ entityManager.createQuery("select m from Member as m").setFirstResult(3).setMaxR
  - 객체 기반
  - 페이징처리 가능
 
-# 영속성 컨택스트(persistence context)
+## 영속성 컨택스트(persistence context)
  - Entity를 영구 저장하는 환경
  - EntityManager를 통해 영속성 컨택스트에 접근
  - EntityManager와 영속성 컨택스트는 1:1로 매칭된다.
@@ -50,7 +56,7 @@ entityManager.createQuery("select m from Member as m").setFirstResult(3).setMaxR
 + commit전에 flush()를 통해 쓰기 지연 SQL 저장소에 저장된 쿼리들을 DB로 보내 영속성 컨택스트의 변경내용을 데이터베이스에 반영한다.
 + em.remove(a) 삭제시에도 위와 같은 과정을 거친다.
 
-# flush()
+## flush()
 + flush() : 영속성 컨텍스트의 변경내용을 데이터베이스에 반영
 + flush() 호출 방법
   - entityManager.flush() 를 통한 직접 호출
