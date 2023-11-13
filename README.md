@@ -1,7 +1,7 @@
 # JPA
 - [JPA](#jpa)  
   * [jpaBasic](#jpabasic)
-  * [영속성 컨택스트(persistence context)](#영속성-컨택스트persistence-context-1)
+  * [영속성 컨택스트(persistence context)](#영속성-컨택스트persistence-context)
   * [flush()](#flush)
 
 ## jpaBasic
