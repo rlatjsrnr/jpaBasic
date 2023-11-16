@@ -4,6 +4,7 @@
   * [영속성 컨택스트(persistence context)](#영속성-컨택스트persistence-context)
   * [flush()](#flush)
   * [Entity 매핑](#Entity-매핑)
+  * [연관관계 매핑 기초](#연관관계-매핑-기초)
 
 ## jpaBasic
 
@@ -153,6 +154,73 @@ List<Member> members= query.getResultList();
         - 기본 키 제약 조건 : null 아님, 유일, 변하면 안됨.
         - 이러한 자연키를 찾기는 어렵다. 대리키(대체키)를 사용하자.
         - Long타입 + 대체키 + 키 생성 전략 사용
-          
         
     
+## 연관관계 매핑 기초
+- 연관관계가 필요한 이유
+  - 테이블은 외래 키로 조인을 사용하여 연관된 테이블을 찾는다.
+  - 객체는 참조를 사용해서 연관된 객체를 찾는다.
+  - 테이블과 객체는 다르다.
+- 단방향 연관관계
+
+<img width="599" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9679f26d-8978-4c4b-b8bf-b27f94d7929b">
+
+  - 연관관계 저장
+    
+```java
+//팀 저장
+ Team team = new Team();
+ team.setName("TeamA");
+ em.persist(team);
+ //회원 저장
+ Member member = new Member();
+ member.setName("member1");
+ member.setTeam(team); //단방향 연관관계 설정, 참조 저장
+ em.persist(member);
+```
+
+ - 연관관계 조회 - 객체 그래프 탐
+```java
+//조회
+ Member findMember = em.find(Member.class, member.getId());
+//참조를 사용해서 연관관계 조회
+ Team findTeam = findMember.getTeam();
+
+```
+
+ - 연관관계 수정
+```java
+// 새로운 팀B
+ Team teamB = new Team();
+ teamB.setName("TeamB");
+ em.persist(teamB);
+ // 회원1에 새로운 팀B 설정
+ member.setTeam(teamB);
+```
+
+- 양방향 연관관계와 연관관계의 주인
+  
+<img width="643" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/3f24eb89-b440-4318-91cc-bb46c7d300dc">
+
+ - 외래키를 가지는 쪽이 주인이 된다.
+ - 외래키는 다(多) 쪽이 가진다.
+ - @ManyToOne : 다(多) 쪽 테이블의 외래키가 가르키는 객체 필드
+ - @JoinColumn(name = "외래키 필드") : 외래키
+ - @OneToMany(maapedBy = "team") : 다 대 1에서 1 쪽의 필드
+   - mappedBy : 이 필드는 mappedBy로 지정한 필드의 거울이다 조회 기능을 한다.
+ - 주의 
+   - 순수 객체 상태를 고려해서 항상 양쪽에 값을 설정해 주자.
+   - 연관관계 편의 매소드를 생성하자.
+
+```java
+public void addMember(Member member){
+  members.add(member);
+  member.setTeam(this);
+}
+```
+ - 양방향 매핑시에 무한 루프를 조심하자.
+   - toString() : member -> team -> members -> member들 -> team들 -> members들 .....
+   - lombok
+   - JSON 생성 라이브러리
+
+
