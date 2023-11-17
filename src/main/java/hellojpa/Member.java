@@ -4,7 +4,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @SequenceGenerator(name = "member_seq_generator", sequenceName = "member_seq", initialValue = 1, allocationSize = 50)
@@ -14,7 +16,7 @@ import java.util.Date;
         pkColumnValue = "MEMBER_SEQ", allocationSize = 1
 )
  */
-public class Member {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue(
@@ -31,6 +33,13 @@ public class Member {
     private Long id;
     @Column(name="name", nullable = false)
     private String username;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LOCKER_ID")
+    private Locker locker;
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberProduct> memberProducts = new ArrayList<>();
 
     public Member() {
     }

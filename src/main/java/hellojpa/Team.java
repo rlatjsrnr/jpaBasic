@@ -17,4 +17,6 @@ public class Team {
     @OneToMany(mappedBy = "team")
     private List<Member_team> members = new ArrayList<>();
 
+
+
 }

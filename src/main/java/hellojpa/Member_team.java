@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity @Getter @Setter
-public class Member_team {
+public class Member_team extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
 
@@ -16,7 +16,7 @@ public class Member_team {
     /*@Column(name = "TEAM_ID")
     private Long teamId;*/
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
