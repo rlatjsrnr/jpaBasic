@@ -5,6 +5,7 @@
   * [flush()](#flush)
   * [Entity 매핑](#Entity-매핑)
   * [연관관계 매핑 기초](#연관관계-매핑-기초)
+  * [다양한 연관관계 매핑](#다양한-연관관계-매핑)
 
 ## jpaBasic
 
@@ -319,8 +320,63 @@ public void addMember(Member member){
   - 한계 극복 : 연결 테이블을 엔티티로 승격, @ManyToMany -> @OneToMany, @ManyToOne
     <img width="557" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9fe8702c-8ef2-4edf-9746-7c90b1e2612c">
 
-  - 
+## 고급 매핑
 
-  
-     
-    
+- 상속 관계 매핑
+  - 관계형 데이터베이스는 상속 관계가 없음
+  - 슈퍼타입 서브타입 관계라는 모델링 기법에 객체 상속과 유사
+  - 객체의 상속 구조와 DB의 슈퍼타임 서브타입 관계를 매핑
+    <img width="594" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/fb2aba70-fd11-480e-852b-67f02b3b70c1">
+
+  - 슈퍼타입 서브타입 논리 모델을 실제 물리 모델로 구현하는 방법
+    - 각각 테이블로 변환 -> 조인 전략
+    - 통합 테이블로 변환 -> 단일 테이블 전략
+    - 서브타입 테이블로 변환 -> 구현 클래스마다 테이블 전략
+    - 주요 어노테이션
+      - @Inheritance(strategy = InheritanceType.XXX)
+        - JOINED : 조인 전략
+        - SINGLE_TABLE : 단일 테이블 전략
+        - TABLE_PER_CLASS : 구현 클래스마다 테이블 전략
+      - @DiscriminatorColumn(name = "DTYPE")
+      - @DiscriminatorValue("XXX")
+    - 조인 전략
+      <img width="645" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9f17f643-d82e-4584-932a-814bc850c2ca">
+
+      - 장점
+        - 테이블 정규화
+        - 외래 키 참조 무결성 제약조건 활용 가능
+        - 저장공간 효율화
+      - 단점
+        - 조회시 조인을 많이 사용, 성능 저하
+        - 조회 쿼리가 복잡
+        - 데이터 저장시 INSERT SQL 두 번 호출
+    - 단일 테이블 전략
+      <img width="545" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/22620804-fbd1-4b80-aa09-b5cd9da3ffa3">
+
+      - 장점
+        - 조인이 필요 없으므로 일반적으로 조회 성능 좋음
+        - 조회 쿼리 단순함
+      - 단점
+        - 자식 엔티티가 매핑한 컬럼은 모두 null허용
+        - 단일 테이블에 모든 것을 저장하므로 테이블이 커질 수 있음.
+        - 상황에 따라선 오히려 조회 성능이 느려질 수도 있다.       
+     - 구현 클래스 마다 테이블 전략
+       <img width="645" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/eff6187e-870d-4edc-830b-f447f4a0d045">
+
+       - 이 전략은 별로임
+       - 장점
+         - 서브 타입을 명확하기 구분해서 처리할 때 효과적
+         - not null 사용가능
+       - 단점
+         - 여러 자식 테이블을 함께 조회할 때 성능 느림(UNION SQL 필요)
+         - 자식 테이블을 통합해서 쿼리하기 힘듬
+
+- @MappedSuperclass
+  - 상속관계 매핑 X
+  - 엔티티 X, 테이블과 매핑 X
+  - 부모 클래스를 상속받는 자식 클래스에 매핑 정보만 제공
+  - 조회, 검색 불가
+  - 직접 생성해서 쓰지 않으므로 추상 클래스 권장
+  - 여러 엔티티에서 공통으로 사용하는 정보를 모을 떄 사용한다.
+
+
