@@ -223,4 +223,104 @@ public void addMember(Member member){
    - lombok
    - JSON 생성 라이브러리
 
+## 다양한 연관관계 매핑
 
+- 연관관계 매핑시 고려사항 3가지
+  - 다중성
+    - 다대일 : @ManyToOne
+    - 일대다 : @OneToMany
+    - 일대일 : @OneToOne
+    - 다대다 : @ManyToMany
+  - 단방향, 양방향
+    - 테이블 : 외래 키 하나로 양쪽 조인 가능
+    - 객체 : 참조용 필드가 있는 쪽으로만 참조 가능, 한 쪽만 참조하면 단방향, 양쪽이 서로 참조하면 양방향      
+  - 연관관계의 주인
+    - 양방향 참조일 때, 둘 중에 외래키를 관리할 곳을 지정해야한다.
+    - 외래키를 관리하는 쪽이 연관관계의 주인.
+    - 주인의 반대편은 외래키에 영향을 주지 않는다. 단순 조회만 가능
+- 다대일 단방향
+
+   <img width="620" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/624d5497-a005-47d4-8eaf-dc3b3071ce13">
+
+  - 가장 많이 사용하는 연관관계
+  - 다대일의 반대는 일대다 이다.
+
+- 다대일 양방향
+
+  <img width="617" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/7598ee11-b124-4d10-a7fb-525ba78d1a62">
+
+  - 외래키가 있는 쪽이 연관관계의 주인이다.
+  - 외래키는 다 쪽에 있다.
+  - 양쪽이 서로를 참조하도록 개발한다.
+    
+- 일대다 단방향
+
+  <img width="587" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/d4f7cc21-d91f-41a2-8247-8fc61f69d041">
+
+  - 일대다 단방향은 일대다에서 일이 연관관계의 주인
+  - 테이블의 일대다 관계는 항상 다 쪽에 외래키가 있음
+  - 객체와 테이블의 차이 때문에 반대편 테이블이 외래키를 관리하는 특이한 구조
+  - @JoinColumn을 꼭 사용해야 함.
+  - 단점
+    - 엔티티가 관리하는 외래키가 다른 테이블에 있음
+    - 연관관계 관리를 위하여 추가로 UPDATE SQL 실행 함
+  - 일대다 단방향 매핑보단 다대일 양방향을 사용하자.
+
+- 일대다 양방향
+
+  <img width="554" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/d891fa3b-1706-41e8-a96e-d6c41f1f5071">
+
+  - 공식적으론 없음
+  - @JoinColumn(insertable=false, updatable=false)
+  - 읽기 전용 필드를 사용해서 양방향 처럼 사용하는 방법
+  - 다대일 양방향 쓰자.
+ 
+- 일대일
+   - 주 테이블이나 대상 테이블 중 외래키 선택 가능
+   - 외래키에 데이터베이스 unique 제약조건 추가
+- 일대일 주 테이블에 외래키 단방향
+
+  <img width="513" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/01075433-e7e2-475b-a68b-997b9b63c31c">
+
+   - 다대일(@ManyToOne) 단방향 매핑과 유사함.
+
+- 일대일 주 테이블에 외래키 양방향
+
+  <img width="543" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/e9aa7dff-f486-4503-8096-303652f0e202">
+
+   - 다대일 양방향 매핑처럼 외래키가 있는 곳이 연관관계의 주인
+   - 반대편은 mappedBy 적용
+
+- 일대일 대상 테이블에 외래키 단방향은 지원X
+- 일대일 대상 테이블에 외래키 양방향
+
+  <img width="576" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/99773184-4dc4-42fe-b540-e5493f0548ef">
+
+  - 일대일 주 테이블에 외래키 양방향과 매핑 방법은 같음
+- 일대일 정리
+  - 주 테이블에 외래 키
+    - 주 객체가 대상 객체의 참조를 가지는 것 처럼 주 테이블에 외래키를 두고 대상 테이블을 찾음
+    - 객체지향 개발자가 선호하는 방식
+    - JPA 매핑이 편리하다.
+    - 장점 : 주 테이블만 조회해도 대상 테이블에 데이터가 있는지 확인 가능
+    - 단점 : 값이 없다면 외래 키에 null을 허용 해야함.
+  - 대상 테이블에 외래 키
+    - 대상 테이블에 외래키가 존재
+    - DBA가 선호하는 방식
+    - 장점 : 주 테이블과 대상 테이블을 일대일에서 일대다로 변경할 때 테이블 구조가 유지된다.
+    - 단점 : 프록시 기능의 한계로 지연로딩 설정을 해도 즉시로딩 됨.
+- 다대다
+  - 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없음
+  - 연결 테이블을 추가하여 일대다, 다대일로 풀어내야 함
+ <img width="534" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/b05a663b-aa48-434a-9212-73ddbd2594b1">
+
+  - @ManyToMany 사용하고 @JoinTable로 연결 테이블을 지정한다.
+  - 다대다의 한계 : 실무에선 사용X, 연결테이블에 다른 데이터가 들어가야 함
+  - 한계 극복 : 연결 테이블을 엔티티로 승격, @ManyToMany -> @OneToMany, @ManyToOne
+    <img width="557" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9fe8702c-8ef2-4edf-9746-7c90b1e2612c">
+
+  - 
+
+  
+     
+    
