@@ -1,14 +1,18 @@
 package hellojpa;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Entity
+@Entity @Getter @Setter
+@NoArgsConstructor
 @SequenceGenerator(name = "member_seq_generator", sequenceName = "member_seq", initialValue = 1, allocationSize = 50)
 /*@TableGenerator(
         name = "Member_SEQ_GENERATOR",
@@ -16,7 +20,7 @@ import java.util.List;
         pkColumnValue = "MEMBER_SEQ", allocationSize = 1
 )
  */
-public class Member extends BaseEntity{
+public class Member{
 
     @Id
     @GeneratedValue(
@@ -34,29 +38,28 @@ public class Member extends BaseEntity{
     @Column(name="name", nullable = false)
     private String username;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
+    // Period
+    @Embedded
+    private Period workPeriod;
 
-    @OneToMany(mappedBy = "member")
-    private List<MemberProduct> memberProducts = new ArrayList<>();
+    // Address
+    @Embedded
+    private Address homeAddress;
 
-    public Member() {
-    }
+    @ElementCollection
+    @CollectionTable(name = "FAVORITE_FOOD",
+            joinColumns = @JoinColumn(name = "MEMBER_ID")
+    )
+    @Column(name = "FOOD_NAME")
+    private Set<String> favoriteFoods = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
+    /*@ElementCollection
+    @CollectionTable(name = "ADDRESS",
+            joinColumns = @JoinColumn(name = "MEMBER_ID")
+    )
+    private List<Address> addressHistory = new ArrayList<>();*/
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "MEMBER_ID")
+    private List<AddressEntity> addressHistory = new ArrayList<>();
 }
