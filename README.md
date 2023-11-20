@@ -6,6 +6,7 @@
   * [Entity 매핑](#Entity-매핑)
   * [연관관계 매핑 기초](#연관관계-매핑-기초)
   * [다양한 연관관계 매핑](#다양한-연관관계-매핑)
+  * [프록시와 연관관게 관리](#프록시와-연관관게-관리)
 
 ## jpaBasic
 
@@ -313,12 +314,12 @@ public void addMember(Member member){
 - 다대다
   - 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없음
   - 연결 테이블을 추가하여 일대다, 다대일로 풀어내야 함
- <img width="534" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/b05a663b-aa48-434a-9212-73ddbd2594b1">
+  <img width="534" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/b05a663b-aa48-434a-9212-73ddbd2594b1">
 
   - @ManyToMany 사용하고 @JoinTable로 연결 테이블을 지정한다.
   - 다대다의 한계 : 실무에선 사용X, 연결테이블에 다른 데이터가 들어가야 함
   - 한계 극복 : 연결 테이블을 엔티티로 승격, @ManyToMany -> @OneToMany, @ManyToOne
-    <img width="557" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9fe8702c-8ef2-4edf-9746-7c90b1e2612c">
+  <img width="557" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9fe8702c-8ef2-4edf-9746-7c90b1e2612c">
 
 ## 고급 매핑
 
@@ -326,6 +327,7 @@ public void addMember(Member member){
   - 관계형 데이터베이스는 상속 관계가 없음
   - 슈퍼타입 서브타입 관계라는 모델링 기법에 객체 상속과 유사
   - 객체의 상속 구조와 DB의 슈퍼타임 서브타입 관계를 매핑
+
     <img width="594" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/fb2aba70-fd11-480e-852b-67f02b3b70c1">
 
   - 슈퍼타입 서브타입 논리 모델을 실제 물리 모델로 구현하는 방법
@@ -339,8 +341,9 @@ public void addMember(Member member){
         - TABLE_PER_CLASS : 구현 클래스마다 테이블 전략
       - @DiscriminatorColumn(name = "DTYPE")
       - @DiscriminatorValue("XXX")
-    - 조인 전략
-      <img width="645" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9f17f643-d82e-4584-932a-814bc850c2ca">
+
+    - 조인 전략  
+  <img width="645" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/9f17f643-d82e-4584-932a-814bc850c2ca">
 
       - 장점
         - 테이블 정규화
@@ -350,8 +353,9 @@ public void addMember(Member member){
         - 조회시 조인을 많이 사용, 성능 저하
         - 조회 쿼리가 복잡
         - 데이터 저장시 INSERT SQL 두 번 호출
-    - 단일 테이블 전략
-      <img width="545" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/22620804-fbd1-4b80-aa09-b5cd9da3ffa3">
+          
+    - 단일 테이블 전략  
+  <img width="545" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/22620804-fbd1-4b80-aa09-b5cd9da3ffa3">
 
       - 장점
         - 조인이 필요 없으므로 일반적으로 조회 성능 좋음
@@ -359,9 +363,10 @@ public void addMember(Member member){
       - 단점
         - 자식 엔티티가 매핑한 컬럼은 모두 null허용
         - 단일 테이블에 모든 것을 저장하므로 테이블이 커질 수 있음.
-        - 상황에 따라선 오히려 조회 성능이 느려질 수도 있다.       
-     - 구현 클래스 마다 테이블 전략
-       <img width="645" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/eff6187e-870d-4edc-830b-f447f4a0d045">
+        - 상황에 따라선 오히려 조회 성능이 느려질 수도 있다.
+         
+     - 구현 클래스 마다 테이블 전략  
+  <img width="645" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/eff6187e-870d-4edc-830b-f447f4a0d045">
 
        - 이 전략은 별로임
        - 장점
@@ -379,4 +384,49 @@ public void addMember(Member member){
   - 직접 생성해서 쓰지 않으므로 추상 클래스 권장
   - 여러 엔티티에서 공통으로 사용하는 정보를 모을 떄 사용한다.
 
+## 프록시와 연관관게 관리
+- 프록시
+  - em.find() vs em.getReference()
+  - em.find() : 데이터베이스를 통해 실제 엔티티 객체 조회
+  - em.getReference() : 데이터베이스 조회를 미루는 가짜(프록시) 엔티티 객체 조회
+  <img width="401" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/6b0e2769-24ad-4050-bb56-a05118e634d3">
+
+  - 특징
+    - 실제 클래스를 상속 받아 만들어 짐
+    - 실제 클래스와 겉 모양이 같다
+    - 사용하는 입장에서는 진짜 객체인지 프록시 객체인지 구분하지 않고 사용하면 됨(이론상)
+    - 프록시 객체는 실제 객체의 참조를 보관한다.
+    - 프록시 객체를 호출하면 프록시 객체는 실제 객체의 매소드 호출
+  - 프록시 객체의 초기화
+  <img width="544" alt="image" src="https://github.com/rlatjsrnr/jpaBasic/assets/137128415/713bbc11-0e77-40f3-8e73-8fcc30a4938c">
+
+    1. 사용자가 프록시 객체에 메소드를 호출하면 프록시 객체는 영속성 컨택스트에 초기화를 요청 함
+    2. 영속성 컨텍스트는 해당 엔티티를 데이터베이스에서 조회한다.
+    3. 실제 엔티티를 생성한다.
+    4. 프록시 객체가 타겟 엔티티의 매소드를 호출한다. 
+
+    - 프록시 객체를 초기화할 떄 프록시 객체가 엔티티로 바뀌는 것은 아니다. 실제 엔티티에 접근 가능해 짐
+    - 프록시 객체는 원본 엔티티를 상속받음, 따라서 타입 체크시에 주의가 필요(== 비교시 false, instance of 사용)
+    - 만약 영속성 컨텍스트에 찾는 엔티티가 이미 있다면 em.getReference() 를 호출하여도 실제 엔티티 반환
+    - 만약 이미 프록시 객체 생성되어 있는데 해당 객체를 em.find() 하면 엔티티가 아닌 프록시 객체를 반환
+    - 영속성 컨텍스트의 도움을 받을 수 없는 상태에서 프록시를 초기화하면 예외 발생 (org.hibernate.LazyInitializationException)
+  - 프록시 확인
+    - 프록시 객체의 초기화 여부 확인 : PersistenceUnitUtil.isLoaded(Object entity)
+    - 프록시 클래스 확인 : entity.getClass().getName() 출력
+    - 프록시 강제 초기화 : org.hibernate.Hibernate.initialize(entity);
+    - JPA표준에는 강제 초기화 없음
+  
+- 즉시 로딩과 지연 로딩  
+  - 즉시 로딩(fetch = FetchType.EAGER) : JPA 구현체는 가능하면 조인을 사용해서 SQL을 한 번에 함께 조회, 조회시 연관된 모든 테이블 조회
+  - 지연 로딩(fetch = FetchType.LAZY) : 연관된 테이블이 실제 필요한 시점에 초기화 ( 프록시 사용 )
+  - 프록시와 즉시 로딩 주의
+    - 가급적 지연 로딩만 사용
+    - 즉시 로딩 시 예상치 못한 SQL 발생
+    - 즉시 로딩은 JPQL에서 N+1 문제를 발생시킴
+    - @ManyToOne, @OneToOne 은 기본이 즉시 로딩이므로 지연 로딩으로 설정
+    - @OneToMany, @ManyToMany는 기본이 지연 로딩
+- 지연 로딩 활용
+- 영속성 전이 : CASCADE
+- 고아 객체
+- 영속성 전이 + 고아 객체, 생명 주기
 
