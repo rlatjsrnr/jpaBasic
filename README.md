@@ -426,7 +426,36 @@ public void addMember(Member member){
     - @ManyToOne, @OneToOne 은 기본이 즉시 로딩이므로 지연 로딩으로 설정
     - @OneToMany, @ManyToMany는 기본이 지연 로딩
 - 지연 로딩 활용
+  - 모든 연관관계에서 지연 로딩을 활용하자!!!
+  - 즉시 로딩의 방식이 필요 하다면 JPQL의 fetch 조인을 활용하자  
 - 영속성 전이 : CASCADE
+  - 특정 엔티티를 영속 상태로 만들 때 연관된 엔티티도 함께 영속 상태로 만들고 싶을 때 사용한다.
+  - ex) 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
+  - 주의 : 영속성 전이는 연관관계 매핑과는 아무런 연관이 없다. 그저 엔티티를 영속화할 때 연관된 엔티티도 함께 영속화 하는 편리함을 제공할 뿐.
+  - CASCADE의 종류
+    - ALL : 모두 적용
+    - PERSIST : 영속
+    - REMOVE : 삭제
+    - MERGE : 병합
+    - REFRESH : REFRESH
+    - DETACH : DETACH
+    - 주로 ALL 또는 PERSIST 사용      
 - 고아 객체
+  - 고아 객체 제거 : 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제
+  - orphanRemoval = true
+  - ```java
+    Parent parent1 = em.find(Parent.class, id);
+    parent1.getChildren().remove(0);
+    //자식 엔티티를 컬렉션에서 제거
+    ```
+  - 위의 경우 0번에 해당하는 자식 객체를 삭제한다.
+  - 주의
+    - 참조하는 곳이 하나일 때 사용해야 함!!
+    - 특정 엔티티가 개인 소유할 때 사용
+    - @OneToOne, @OneToMany만 가능
+      
 - 영속성 전이 + 고아 객체, 생명 주기
+  - CascadeType.ALL, orphanRemoval=true 두 속성을 함께 사용하면 부모 엔티티를 통해서 자식 엔티티의 생명주기 관리가 가능하다
+  - 부모 객체가 영속화되면 자식 객체도 영속화
+  - 부모 객체가 삭제되었을 때, 부모 객체로 부터 연관관계가 끊어졌을 때 모두 자식객체 삭제
 
